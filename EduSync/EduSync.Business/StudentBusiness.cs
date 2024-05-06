@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.WebRequestMethods;
 
 namespace EduSync.Business
 {
@@ -17,52 +18,99 @@ namespace EduSync.Business
             this._studentRepository = studentRepository;
         }
 
-        public void AddStudent(StudentModel studentModel)
+        public Response AddStudent(StudentModel studentModel)
         {
-            Student student = new Student();
-            student.StudentId= studentModel.StudentId;
-            student.Name = studentModel.Name;
-            student.Email = studentModel.Email;
-            student.EnrollmentYear = studentModel.EnrollmentYear;
-            
-            
-
-            this._studentRepository.AddStudent(student);
-            this._studentRepository.SaveChanges();
-        }
-
-        public void DeleteStudent(int studentId)
-        {
-            this._studentRepository.DeleteStudent(studentId);
-            this._studentRepository.SaveChanges();
-        }
-
-        public StudentModel GetStudent(int studentId)
-        {
-            var student = this._studentRepository.GetStudent(studentId);
-            /*return new StudentModel
+            Response res = new Response();
+            try
             {
-                StudentId = student.StudentId,
-                Name = student.Name,
-                Email=student.Email,
-                EnrollmentYear=student.EnrollmentYear
+                Student student = new Student();
+                student.StudentId = studentModel.StudentId;
+                student.Name = studentModel.Name;
+                student.Email = studentModel.Email;
+                student.EnrollmentYear = studentModel.EnrollmentYear;
+
+
+
+                this._studentRepository.AddStudent(student);
+                this._studentRepository.SaveChanges();
+              
+                 res.ResponseMessage = "Successfully Added Student";
+
+         
+
+                res.ResponseStatusCode = "200";
+
+            }
+            catch (Exception ex)
+            {
+                res.ResponseMessage = ex.Message;
+                res.ResponseStatusCode = "500";
+            }
+            return res;
+        }
+
+        public Response DeleteStudent(int studentId)
+        {
+            Response res = new Response();
+            try
+            {
+                this._studentRepository.DeleteStudent(studentId);
+                this._studentRepository.SaveChanges();
+                res.ResponseMessage = "Successfully Deleted";
+                res.ResponseStatusCode="200";
                 
-            };*/
-            if(student!=null)
+            }
+            catch(Exception ex)
             {
-                return new StudentModel
+                res.ResponseMessage =ex.Message;
+                res.ResponseStatusCode = "500";
+            }
+            return res;
+           
+        }
+
+        public Response GetStudent(int studentId)
+        {
+            Response res=new Response();
+            try
+            {
+
+
+                  var student = this._studentRepository.GetStudent(studentId);
+                /*return new StudentModel
                 {
                     StudentId = student.StudentId,
                     Name = student.Name,
-                    Email = student.Email,
-                    EnrollmentYear = student.EnrollmentYear
+                    Email=student.Email,
+                    EnrollmentYear=student.EnrollmentYear
 
-                };
+                };*/
+
+                if (student != null)
+                {
+                    res.Result= new StudentModel
+                    {
+                        StudentId = student.StudentId,
+                        Name = student.Name,
+                        Email = student.Email,
+                        EnrollmentYear = student.EnrollmentYear
+
+                    };
+                    res.ResponseMessage = "Successfully fetched the data";
+                    res.ResponseStatusCode = "200";
+                    return res;
+                }
+                res.ResponseMessage = "Unable to fetch data";
+                res.ResponseStatusCode = "200";
+                
+                
             }
-            else
+            catch(Exception ex)
             {
-                return null;
+                res.ResponseMessage = ex.Message;
+                res.ResponseStatusCode = "500";
             }
+            return res;
         }
 
         public List<StudentModel> GetStudents()
@@ -81,17 +129,31 @@ namespace EduSync.Business
             return studentModels.ToList();
         }
 
-        public void UpdateStudent(StudentModel studentModel)
+        public Response UpdateStudent(StudentModel studentModel)
         {
-            Student student = new Student();
-            student.StudentId = studentModel.StudentId;
-            student.Name = studentModel.Name;
-            student.Email = studentModel.Email;
-            student.EnrollmentYear = studentModel.EnrollmentYear;
-            
+            Response res = new Response();
+            try
+            {
+                Student student = new Student();
+                student.StudentId = studentModel.StudentId;
+                student.Name = studentModel.Name;
+                student.Email = studentModel.Email;
+                student.EnrollmentYear = studentModel.EnrollmentYear;
 
-            this._studentRepository.UpdateStudent(student);
-            this._studentRepository.SaveChanges();
+
+                this._studentRepository.UpdateStudent(student);
+                this._studentRepository.SaveChanges();
+                res.ResponseMessage = "Successfully Updated Student";
+
+                res.ResponseStatusCode = "200";
+            }
+            catch (Exception ex)
+            {
+                res.ResponseMessage = ex.Message;
+                res.ResponseStatusCode = "500";
+            }
+            return res;
+          
         }
     }
 }

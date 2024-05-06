@@ -17,16 +17,18 @@ namespace EduSync.Web.API.Controllers
         }
 
         [HttpPost]
-        public void AddOrUpdateStudent(StudentModel studentModel)
+        public Response AddOrUpdateStudent(StudentModel studentModel)
         {
+            Response res = new Response();
             if (studentModel.StudentId == 0)
             {
-                this._studentBusiness.AddStudent(studentModel);
+                res= this._studentBusiness.AddStudent(studentModel);
             }
             else
             {
-                this._studentBusiness.UpdateStudent(studentModel);
+                res= this._studentBusiness.UpdateStudent(studentModel);
             }
+            return res;
         }
 
         [HttpGet]
@@ -36,15 +38,16 @@ namespace EduSync.Web.API.Controllers
         }
 
         [HttpGet("{studentId:int}")]
-        public StudentModel GetStudent(int studentId)
+        public Response GetStudent(int studentId)
         {
             return this._studentBusiness.GetStudent(studentId);
         }
 
         [HttpDelete]
-        public void DeleteStudent(int studentId)
+        public Response DeleteStudent(int studentId)
         {
-            this._studentBusiness.DeleteStudent(studentId);
+            var res=this._studentBusiness.DeleteStudent(studentId);
+            return res;
         }
     }
 }
